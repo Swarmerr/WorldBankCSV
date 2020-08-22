@@ -1,0 +1,11 @@
+import csv
+from World_Bank_Class import WorldBankCSV as wbs
+from World_Bank_Class import WorldBankDictionary as wbd
+
+csv = wbs("Short_TermDN.txt")
+csv_dictionary = csv.get_dictionary()
+csv_date = csv.get_date()
+
+sda = wbd(csv_dictionary,csv_date)
+
+sda.percent_change_output()

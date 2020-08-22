@@ -1,0 +1,112 @@
+import csv
+
+class WorldBankCSV:
+    "A World Bank CSV class for all their files"
+
+    def __init__(self, csv_file):
+        """ Initialize attributes for csv_file"""
+        self.csv_file = csv_file
+        
+    def get_dictionary(self):
+        """Opens CSV file, creates a dictionary, creates a starting date. Enter file.txt."""
+        
+        filename = self.csv_file
+        with open(filename) as f:
+            reader = csv.reader(f)
+            self.header_row = next(reader)
+            for rows in reader:
+                self.debt_dict = {rows[0]: rows[1:] for rows in reader}
+            return self.debt_dict
+
+    def get_date(self):
+        """Opens CSV, returns starting date"""
+        filename = self.csv_file
+        with open(filename) as f:
+            reader = csv.reader(f)
+            self.header_row = next(reader)
+            # Get starting date for data 
+            self.date = self.header_row[4:5]
+            print(self.date)
+            return self.date
+    
+    def create_header_dictionary(self):
+        """Creates a list for the headers in WorldBankCSV"""
+        new_list = []
+        filename = self.csv_file
+        with open(filename) as f:
+            reader = csv.reader(f)
+            self.header_row = next(reader)
+            # identifies the starting Date 
+        for header in self.header_row:
+            if len(header) == 17:
+                a = header[0:6]
+                # why the fuck does this work? what is it doing to the code that allows me to get all parts of the string? desired string for code is year XXXX and quarter QX
+                b = a[0:4] + " " + a[4:6]
+                print(a)
+                new_list.append(b)
+            else:
+                b = header
+                new_list.append(b)
+        return new_list
+
+class WorldBankDictionary:
+
+    def __init__(self,dictionary,date):
+        """Initialize attributes for dictionary from csv_file"""
+        self.dictionary = dictionary
+        self.date = str(date)
+
+    def percent_change_output(self):
+        """funtion loops through a CSV dictionary and identifies large % changes"""
+        csv_dictionary = self.dictionary
+        print(self.date)
+        
+        Year = int(self.date[2:6])
+        Quarter = int(self.date[7:8])
+
+        print(Year)
+        print(Quarter)
+        for country, debts in csv_dictionary.items():
+            print(f"\n{country.title()} output:")
+            """print(f"\n{debts}")"""
+            new_list = []
+    # this loops through the list elements and creates tupled list for percent
+    # change calculations 
+            for new_debt in debts:
+                if new_debt == "..":
+                    b = 0
+                    new_list.append(b)
+                else:
+                    try:
+                        b = float(new_debt)
+                        new_list.append(b)
+                    except ValueError:
+                        pass
+
+            Year = 2007
+            Quarter = 4
+            
+            # this make a tupled list that we can loop through for percent change
+            debt_pairs = zip(new_list, new_list[1:])
+            for debt1, debt2 in debt_pairs:
+                # Setting parameters for the dates
+                if Quarter + 1 == 5: 
+                    Quarter = 1
+                    Year = Year + 1
+                else:
+                    Quarter = Quarter + 1
+                date = str(Year) + " Q" + str(Quarter)
+                
+                if debt1 == 0 and debt2 > 0:
+                    print(f"\n {date}")
+                    print("Investigate for loan activity.")
+                elif debt1 == 0:
+                    pass
+                else:
+                    percent_change = (debt2 - debt1) / debt1
+                    if percent_change > .4:
+                        print(f"\n {date}")
+                        print(percent_change)
+                    else:
+                        pass
+            
